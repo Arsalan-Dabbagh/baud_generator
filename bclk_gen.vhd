@@ -18,6 +18,9 @@
 -- Additional Comments:
 -- The bclk_gen module derives specific baud rates from a given input clock.
 -- 
+--
+-- Licensed under the CERN-OHL-P v2.0.
+-- See the LICENSE file or https://cern.ch/cern-ohl-p for detailsS
 ----------------------------------------------------------------------------------
 
 
