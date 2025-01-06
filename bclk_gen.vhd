@@ -25,48 +25,65 @@
 
 
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
-
+use IEEE.STD_LOGIC_1164.ALL;  
+use IEEE.NUMERIC_STD.ALL;     
 
 
 entity bclk_gen is
 
+    
     generic(
-        BAUD_RATE           : 	integer := 9600; 		-- Desire baud rate
-        CLOCK_FREQUENCY     : 	integer := 100000000;	-- Input clock in Hz
-		OVERSAMPLING_RATE	: 	integer := 16			-- Oversampling rate for the clock
+        BAUD_RATE           : integer := 115200;    -- Desired baud rate
+        CLOCK_FREQUENCY     : integer := 100000000; -- Frequency of the input clock in Hz
+        OVERSAMPLING_RATE   : integer := 16         -- Oversampling factor
     );
-	
-    Port (
-        IN_CLK  : in std_logic;		-- Input clock signal
-        B_CLK   : out std_logic 	-- Output baud clock signal
+    
+    
+    port (
+        CLK 	: in std_logic;		-- Input clock signal					
+        RST		: in std_logic;		-- Asynchronous reset signal
+        BCLK	: out std_logic		-- Generated baud clock output				
      );
-	 
+     
 end bclk_gen;
-    
+
+
 architecture Behavioral of bclk_gen is
+	
+    -- Calculate the maximum counter value for one baud clock cycle
+    constant COUNTER_MAX: integer := CLOCK_FREQUENCY  / (BAUD_RATE * OVERSAMPLING_RATE);
     
-    constant COUNTER_MAX : integer := CLOCK_FREQUENCY / (BAUD_RATE * OVERSAMPLING_RATE); -- Maximum counter to achieve the desired baud rate
+    -- Signal of counter value
+    signal clock_counter: integer := 0;	
     
-    signal clock_counter : integer := 0;	-- Internal signal to count the clock
-    
-    signal bclk_reg	: std_logic := '0';		-- Register to hold state of the baud clock
-    
+    -- Signal of generated baud clock state
+    signal baud_reg: std_logic := '0';
+
 begin
-	-- Process to generate the baud clock
-    baud_process: process(IN_CLK) 
-        begin
-            if rising_edge(IN_CLK) then 	-- Triggered on the rising edge 
+
+    -- Process to generate the baud clock
+    baud_process: process(CLK, RST)
+    begin
+        -- Check for rising edge of the clock
+        if rising_edge(CLK) then
+            -- If reset is active (RST = '0'), initialize the counter and output signal
+            if RST = '0' then
+                clock_counter <= 0;
+                baud_reg <= '0';
+            else
+                -- If the counter reaches the maximum value, toggle the baud clock and reset the counter
                 if clock_counter = COUNTER_MAX - 1 then
-					clock_counter <= 0;
-                    bclk_reg <= not bclk_reg; 	-- Toggle the baud clock
-				else
+                    clock_counter <= 0;
+                    baud_reg <= not baud_reg;  -- Toggle baud_reg
+                -- If the counter hasn't reached the maximum, increment it
+                elsif clock_counter < COUNTER_MAX - 1 then
                     clock_counter <= clock_counter + 1;
                 end if;
             end if;
-        end process; 
-     
-    B_CLK <= bclk_reg;	-- Assign the baud register to the output port   
+        end if;
+    end process;
+
+    -- Assign the generated baud clock signal to the output port
+    BCLK <= baud_reg; 
 
 end Behavioral;
