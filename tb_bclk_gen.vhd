@@ -2,10 +2,10 @@
 -- Engineer: Arsalan Dabbagh
 -- 
 -- Create Date: 03/01/2025 
--- Module Name: bclk_gen 
+-- Module Name: tb_bclk_gen 
 -- Project Name: baud_generator
 -- Description: 
--- Implements a baud rate generator in VHDL.
+-- Testbench for bclk_gen.
 -- 
 -- Dependencies: 
 -- IEEE.STD_LOGIC_1164.ALL
@@ -16,11 +16,8 @@
 -- 
 -- 
 -- Additional Comments:
--- The bclk_gen module derives specific baud rates from a given input clock.
 -- 
 --
--- Licensed under the CERN-OHL-P v2.0.
--- See the LICENSE file or https://cern.ch/cern-ohl-p for detailsS
 ----------------------------------------------------------------------------------
 
 
